@@ -89,8 +89,7 @@
 > 
 
 <p align = 'center'>
-<img src = "https://user-images.githubusercontent.com/93521799/146636948-54ae7eb3-67ee-44c9-8736-
-cd45bb401807.png" width = "450">
+<img src = "https://user-images.githubusercontent.com/93521799/146638257-ea283860-7101-46f2-98b5-b5bfeb4f7955.png" width = "450">
 </p>
 <p align = 'center'>
 <em>네트워크 계층 모델에는 OSI와 TCP/IP이 있다.</em>
