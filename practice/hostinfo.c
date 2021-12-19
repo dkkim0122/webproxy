@@ -6,10 +6,6 @@ int main(int argc, char **argv)
     char buf[MAXLINE];
     int rc, flags;
 
-    /* 
-    
-     */
-
     /* hint 구조체 세팅 */
     memset(&hints, 0, sizeof(struct addrinfo));  // hint 구조체 초기화
     hints.ai_family = AF_INET;       /* IPv4 only */
@@ -33,7 +29,7 @@ int main(int argc, char **argv)
     */
     flags = NI_NUMERICHOST; /* 도메인 이름을 리턴하지 않고 10진수 주소 스트링을 대신 리턴한다. */
     for (p = listp; p; p = p->ai_next) {
-        getnameinfo(p->ai_addr, p->ai_addrlen,  // addrinfo 안의 IP주소(소켓 주소 구조체)를 찾아
+        Getnameinfo(p->ai_addr, p->ai_addrlen,  // addrinfo 안의 IP주소(소켓 주소 구조체)를 찾아
                     buf, MAXLINE,   // 호스트 이름. flag를 썼으니 10진수 주소로.
                     NULL, 0,        // service는 안받아오는듯
                     flags);

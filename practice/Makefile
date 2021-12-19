@@ -5,7 +5,10 @@ CFLAGS = -O2 -Wall -I .
 # Others systems will probably require something different.
 LIB = -lpthread
 
-all: echoclient echoserver
+all: echoclient echoserver hostinfo
+
+hostinfo: hostinfo.c csapp.o
+	$(CC) $(CFLAGS) -o hostinfo hostinfo.c csapp.o $(LIB)
 
 echoclient: echoclient.c csapp.o
 	$(CC) $(CFLAGS) -o echoclient echoclient.c csapp.o $(LIB)
