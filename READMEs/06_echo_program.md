@@ -297,6 +297,8 @@ echo.o: echo.c
     ```
     
 2. 클라이언트를 열어준다. 내가 요청을 보내줄 서버의 IP와 포트 번호를 입력한다.
+
+    난 AWS 서버를 사용 중이므로 해당 인스턴스의 Public IP가 서버의 IP이다. 만약 WSL을 사용 중이라면 그냥 내 컴퓨터 호스트의 IP를 사용한다. 아니면 Localhost를 사용해도 된다!
     
     ```c
     $ ./echoclient xxx.xxx.xxx.xxx 8000
