@@ -157,7 +157,7 @@
 💡 TCP/IP 계층구조를 구성하는 다양한 프로토콜 중에서 **전송 계층의 TCP 프로토콜**과 **네트워크 계층의 IP 프로토콜이 대표적**이기에 TCP/IP프로토콜이라 불린다.
 
 <p align = 'center'>
-<img src = "https://user-images.githubusercontent.com/93521799/146636951-83605d33-a7ee-42d5-82d5-7316ad6f83ff.png" width = "450">
+<img src = "https://user-images.githubusercontent.com/93521799/146640066-ef38fbfa-1309-47c7-b9ad-aceb2066ac13.png" width = "500">
 </p>
 <p align = 'center'>
 <em></em>
@@ -197,17 +197,28 @@
 **DMA(Direct Memory Access)**
 ---
 
-메모리는 CPU에게 인터럽트를 걸지만, 네트워크는 바로 메모리에게 엑세스할 수 있다.
+**CPU의 개입 없이** I/O 장치와 메모리 사이의 데이터를 전송하는 방식. 프로그램 수행 중의 인터럽트의 발생 횟수를 최소화한다. 컴퓨터 내부의 버스 bus가 지원하는 기능이다.
+
+네트워크는 DMA 기능을 통해 CPU의 개입 없이 메모리에 접근할 수 있다.
 
 <br>
 
 **LAN(Local Area Network)**
 ---
+수 km 범위 이내의 국지적인 지역에 한정된 네트워크.
+
+<br>
+
+**WAN(Wide Area Network)**
+---
+먼 거리에 있는 근거리 통신망이나 도시권 통신망으로 데이터를 전송하는데 쓰이는 네트워크
+
 
 <br>
 
 **네트워크의 하위 수준 : 이더넷 세그먼트 Ethernet Segment**
 ---
+
 
 > **허브**에 여러 **호스트들**이 **전선**으로 연결된다. 한 방이나 건물의 한 층을 관리할 수 있다.
 > 
