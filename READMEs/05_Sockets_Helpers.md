@@ -65,7 +65,7 @@ int open_clientfd(char *hostname, char *port);
     > 
     
     ```c
-    		/* 
+    	/* 
             Get a list of potential server addresses 
         */
         memset(&hints, 0, sizeof(struct addrinfo));
@@ -84,14 +84,14 @@ int open_clientfd(char *hostname, char *port);
     - 연결을 실패하면 소켓을 닫아주고 다음 소켓을 진행한다.
     
     ```c
-    		for (p = listp; p; p = p->ai_next) {
+    	for (p = listp; p; p = p->ai_next) {
             /* Create a socket descriptor */
             if ((clientfd = socket(p->ai_family, p->ai_socktype, 
                                    p->ai_protocol)) < 0)  // 식별자를 리턴 못하고 -1 리턴한다면.
                 continue; /* Socket failed, try the next */
     
             /* Connect to the server */
-            // socket()으로 만든 클라이언트 호스트의 소켓의 식별자, 서버의 주소를 넣고 서버와 연결을 시도한다.
+            // socket()으로 만든 클라이언트 호스트 소켓 식별자, 서버의 주소를 넣고 서버와 연결을 시도한다.
             if (connect(clientfd, p->ai_addr, p->ai_addrlen) != -1)  //
                 break; /* Success */
     
@@ -158,7 +158,7 @@ int open_listenfd(char *port);
 - **getaddrinfo() : 해당 포트와 연결할 수 있는 서버의 소켓 주소 리스트를 반환한다.**
     
     ```c
-    		/* Get a list of potential server addresses */
+    	/* Get a list of potential server addresses */
         /* 해당 포트와 연결할 수 있는 서버의 소켓 주소 리스트를 반환한다. */
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_socktype = SOCK_STREAM;             /* Accept connect. TCP 프로토콜. */
@@ -176,7 +176,7 @@ int open_listenfd(char *port);
     > 
     
     ```c
-    		/* Walk the list for one that we can bind to */
+    	/* Walk the list for one that we can bind to */
         for (p = listp; p; p = p->ai_next) {
             /* Create a socket descriptor */
             /* 해당 와일드카드 주소의 형식에 맞는 소켓 만들기 */
@@ -208,7 +208,7 @@ int open_listenfd(char *port);
 - **해당 소켓을 듣기 소켓으로 변환하고 그 소켓 식별자를 리턴한다.**
     
     ```c
-    /* Make it a listening socket ready to accept conn. requests */
+        /* Make it a listening socket ready to accept conn. requests */
         if (listen(listenfd, LISTENQ) < 0) {
             Close(listenfd);
             return -1;

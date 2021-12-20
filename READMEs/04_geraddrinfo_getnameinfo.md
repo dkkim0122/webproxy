@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 
 ```c
     /* 
-			<Get a list of addrinfo records>
+	    <Get a list of addrinfo records>
       getaddrinfo()로 해당 도메인에 대한 소켓 주소의 리스트 addrinfo를 반환한다.
       입력받은 main()의 인자 중 2번째(1번째는 실행파일명)의 도메인 주소로부터, 
       서비스는 도메인 이름만을 변환하기 위해 NULL, 힌트 추가, listp 반환
