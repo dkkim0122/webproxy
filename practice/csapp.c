@@ -959,7 +959,7 @@ int open_clientfd(char *hostname, char *port) {
     if ((rc = getaddrinfo(hostname, port, &hints, &listp)) != 0) {
         fprintf(stderr, "getaddrinfo failed (%s:%s): %s\n", hostname, port, gai_strerror(rc));
         return -2;
-    }ㄹ
+    }
   
     /* Walk the list for one that we can successfully connect to */
     for (p = listp; p; p = p->ai_next) {
