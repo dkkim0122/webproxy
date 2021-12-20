@@ -267,6 +267,12 @@ void get_filetype(char *filename, char *filetype)
     strcpy(filetype, "text/plain");
 }
 
+/*
+  serve_dynamic() : 
+  클라이언트가 원하는 동적 컨텐츠 디렉토리를 받아온다. 
+  응답 라인과 헤더를 작성하고 서버에게 보낸다. 
+  CGI 자식 프로세스를 fork하고 그 프로세스의 출력을 서버의 표준 출력과 연결한다.
+*/
 
  void serve_dynamic(int fd, char *filename, char *cgiargs)
 {
@@ -280,6 +286,9 @@ void get_filetype(char *filename, char *filetype)
   if (Fork() == 0) { /* Child */
     /* Real server would set all CGI vars here */
     setenv("QUERY_STRING", cgiargs, 1);  // 
+
+    // 클라이언트의 표준 출력을 CGI 프로그램의 표준 출력과 연결한다.
+    // 이제 CGI 프로그램에서 printf하면 클라이언트에서 출력됨
     Dup2(fd, STDOUT_FILENO); /* Redirect stdout to client */
     Execve(filename, emptylist, environ); /* Run CGI program */
   }

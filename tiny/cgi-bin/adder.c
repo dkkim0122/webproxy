@@ -30,7 +30,7 @@ int main(){
     printf("Connection: close\r\n");
     printf("Content-length: %d\r\n", (int)strlen(content));
     printf("Conten-type: text/html\r\n\r\n");
-    printf("%s", content);  // 응답 본체 출력!
+    printf("%s", content);  // 응답 본체를 클라이언트 표준 출력!
     fflush(stdout);
 
     exit(0);
