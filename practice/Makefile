@@ -7,6 +7,9 @@ LIB = -lpthread
 
 all: echoclient echoserver hostinfo
 
+adder: adder.c csapp.o
+	$(CC) $(CFLAGS) -o adder adder.c csapp.o $(LIB)
+
 hostinfo: hostinfo.c csapp.o
 	$(CC) $(CFLAGS) -o hostinfo hostinfo.c csapp.o $(LIB)
 
