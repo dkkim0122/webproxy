@@ -121,7 +121,10 @@ void doit(int connfd)
 
 // request_hdr = "GET /home.html HTTP/1.0\r\n"
 // host_hdr: "Host: localhost:8000"
-// other_hdr = "Connection:??\r\nProxy-Connection:??\r\nUser-Agent:???"
+// conn_hdr = "Connection: close\r\n"
+// prox_hdr = "Proxy-Connection: close\r\n"
+// user_agent_hdr = "User-Agent: ...."
+// other_hdr = Connection, Proxy-Connection, User-Agent가 아닌 모든 헤더
 // 다 저장했으면 http_header에 전부 넣는다.
 void build_http_header(char *http_header,char *hostname,char *path,int port,rio_t *client_rio)
 {
@@ -143,9 +146,9 @@ void build_http_header(char *http_header,char *hostname,char *path,int port,rio_
             continue;
         }
         /* 나머지 헤더 찾기 */
-        if(!strncasecmp(buf,connection_key,strlen(connection_key))
-              || !strncasecmp(buf,proxy_connection_key,strlen(proxy_connection_key))
-              || !strncasecmp(buf,user_agent_key,strlen(user_agent_key)))
+        if(strncasecmp(buf,connection_key,strlen(connection_key))
+              && strncasecmp(buf,proxy_connection_key,strlen(proxy_connection_key))
+              && strncasecmp(buf,user_agent_key,strlen(user_agent_key)))
         {
             strcat(other_hdr,buf);
         }
