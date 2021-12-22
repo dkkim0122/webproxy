@@ -428,3 +428,170 @@ void parse_uri(char *uri,char *hostname,char *path,int *port)
     return;
 }
 ```
+<br>
+<br>
+
+# **Part II: Dealing with multiple concurrent requests**
+
+- The simplest way to implement a concurrent server is to spawn a new thread to handle each new connection request.
+- Note that your threads should run in detached mode to avoid memory leaks.
+
+<br>
+
+## posix 쓰레드
+
+> UNIX 기반 OS 시스템에 API로 정의되어있는 Thread이다. `<pthread.h>` 헤더파일을 include해서 쓴다.
+> 
+
+리눅스에서는 gcc -o thread thread.c **-lpthread**를 뒤에 꼭 적어주어야 한다.
+
+<br>
+
+## 쓰레드 생성 pthread_create()
+
+> 쓰레드를 생성한다.
+> 
+
+```c
+#include <pthread.h>
+typedef void *(func)(void *);
+
+int pthread_create(pthread_t *tid, pthread_attr_t *attr, func *f, void *arg);
+```
+
+**인자**
+
+- **쓰레드의 고유 식별자 tid**
+- **쓰레드 특성 attr** : 기본 쓰레드 특성을 이용하려면 **NULL**을 사용한다.
+- **쓰레드가 수행하게 될 함수 f**
+- **함수 f에 넣게 될 인자 arg**
+
+<br>
+
+## pthread_self()
+
+> 지금 문맥 상에서 실행되고 있는 쓰레드의 식별자 번호를 리턴한다.
+> 
+
+```c
+pthread_t tid;
+
+tid = pthread_self();
+```
+
+<br>
+
+## 쓰레드 종료 pthread_exit()
+
+> **해당 쓰레드를 종료한다.**
+> 
+
+```c
+void pthread_exit(void *thread_return);
+```
+
+**인자**
+
+- **thread_return**
+
+### 종료한 쓰레드 삭제 pthread_join()
+
+> 인자로 넣어 준 **자식 쓰레드가 종료될 때까지 기다린다.** 그 후 **종료된 쓰레드가 가지고 있는 모든 메모리 자원을 삭제한다.**
+> 
+
+```c
+int pthread_join(pthread_t thread, void **thread_return);
+```
+
+**인자**
+
+- **기다리고자 하는 자식 쓰레드의 식별자 thread**
+- **자식 쓰레드가 종료 시 리턴되는 값 thread_return**
+
+<br>
+
+## 쓰레드 분리 pthread_detach()
+
+> 쓰레드를 분리시킨다.
+> 
+
+```c
+int pthread_detach (pthread_t tid);
+```
+
+기본적으로 연결된 쓰레드는 종료되더라도 pthread_join()을 사용하기 전에는 자원이 삭제(회수)되지 않는다. 하지만 **분리된 쓰레드를 종료시킬 경우 그 즉시 자원이 회수될 수 있다.**
+
+**인자**
+
+- **분리시킬 쓰레드 tid** : 자기 자신을 분리시킬 경우 `pthread_self()`**의 리턴값을 넣는다.**
+
+<br>
+
+# proxy 과제에 적용하기
+
+## proxy.c
+
+### 변수 선언
+
+```c
+/* 쓰레드가 생성될 때 수행하게 될 함수를 선언한다. */
+void* thread(void* vargsp);
+```
+
+## main()
+
+클라이언트를 연결할 때마다 그 연결을 수행하는 쓰레드를 만들어준다.
+
+```c
+int main(int argc,char **argv)
+{
+    int listenfd,connfd;
+    socklen_t  clientlen;
+    char hostname[MAXLINE],port[MAXLINE];
+    pthread_t tid;  /* 새로 만들어진 쓰레드의 식별자 */
+
+    struct sockaddr_storage clientaddr;/*generic sockaddr struct which is 28 Bytes.The same use as sockaddr*/
+
+    if(argc != 2){
+        fprintf(stderr,"usage :%s <port> \n",argv[0]);
+        exit(1);
+    }
+
+    listenfd = Open_listenfd(argv[1]);
+
+    /* 연결 시마다 쓰레드를 만들어준다. */
+    while(1){
+        clientlen = sizeof(clientaddr);
+        connfd = Accept(listenfd,(SA *)&clientaddr,&clientlen);
+
+        /*print accepted message*/
+        Getnameinfo((SA*)&clientaddr,clientlen,hostname,MAXLINE,port,MAXLINE,0);
+        printf("Accepted connection from (%s %s).\n",hostname,port);
+
+        /*sequential handle the client transaction*/
+        //doit(connfd);
+        //Close(connfd);
+
+        /* doit과 Close를 쓰레드 안에서 수행할 것이다. */
+        /* thread 함수를 connfd 인자로 받아서. */
+        Pthread_create(&tid, NULL, thread, connfd);
+    }
+    return 0;
+}
+```
+
+## thread()
+
+> 새롭게 생성된 쓰레드 안에서 클라이언트와의 통신을 수행한다.
+> 
+
+인자로 연결 식별자를 받는다. 자기 자신을 먼저 분리한 다음 doit()을 수행한다. 그 후 바로 종료한다. 분리되어 있으므로 종료 후 즉시 메모리가 회수된다.
+
+```c
+void* thread(void *vargs){
+    int connfd = (int)vargs;
+    Pthread_detach(pthread_self());  // 자기 자신을 분리해준다.
+    doit(connfd);
+    Close(connfd);
+}
+```
