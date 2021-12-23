@@ -20,7 +20,7 @@ static const char *host_key = "Host";
 void doit(int connfd);
 void parse_uri(char *uri,char *hostname,char *path,int *port);
 void build_http_header(char *http_header,char *hostname,char *path,int port,rio_t *client_rio);
-int connect_endServer(char *hostname,int port,char *http_header);
+int connect_endServer(char *hostname,int port);
 
 /* 쓰레드가 생성될 때 수행하게 될 함수를 선언한다. */
 void* thread(void* vargsp);
@@ -121,7 +121,7 @@ void doit(int connfd)
 
     /*connect to the end server*/
     /* 프록시 서버와 엔드 서버를 연결함 */
-    end_serverfd = connect_endServer(hostname,port,endserver_http_header);
+    end_serverfd = connect_endServer(hostname,port);
     // clinetfd connected from proxy to end server at proxy side
     // port: 8000
     if(end_serverfd<0){
@@ -199,7 +199,7 @@ void build_http_header(char *http_header,char *hostname,char *path,int port,rio_
 
 /* 프록시 서버와 엔드 서버를 연결한다. */
 /*Connect to the end server*/ //
-inline int connect_endServer(char *hostname,int port,char *http_header){
+inline int connect_endServer(char *hostname,int port){
     char portStr[100];
     sprintf(portStr,"%d",port);
     return Open_clientfd(hostname,portStr);
