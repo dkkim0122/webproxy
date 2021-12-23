@@ -545,7 +545,7 @@ void* thread(void* vargsp);
 ```c
 int main(int argc,char **argv)
 {
-    int listenfd,connfd;
+    int listenfd, *connfdp; 
     socklen_t  clientlen;
     char hostname[MAXLINE],port[MAXLINE];
     pthread_t tid;  /* 새로 만들어진 쓰레드의 식별자 */
@@ -557,12 +557,19 @@ int main(int argc,char **argv)
         exit(1);
     }
 
+    /* 연결이 끊어진 소켓에 데이터를 전달해주면 SIGPIPE 시그널이 전달되면서 프로세스가 바로 종료된다. */
+    /* SIGPIPE 시그널을 무시(SIG_IGN)해준다는 처리를 해 주어야 한다. */
+    Signal(SIGPIPE, SIG_IGN);
     listenfd = Open_listenfd(argv[1]);
 
     /* 연결 시마다 쓰레드를 만들어준다. */
     while(1){
         clientlen = sizeof(clientaddr);
-        connfd = Accept(listenfd,(SA *)&clientaddr,&clientlen);
+
+        /* pthread_create의 경우 argp 인자가 void* 이다. 
+        따라서 연결 식별자를 인자로 넣어줄 수 있게 안전하게 포인터를 만들어준다. */
+        connfdp = Malloc(sizeof(int));
+        *connfdp = Accept(listenfd,(SA *)&clientaddr,&clientlen); // 포인터가 가리키는 값을 연결 식별자 값으로.
 
         /*print accepted message*/
         Getnameinfo((SA*)&clientaddr,clientlen,hostname,MAXLINE,port,MAXLINE,0);
@@ -574,7 +581,7 @@ int main(int argc,char **argv)
 
         /* doit과 Close를 쓰레드 안에서 수행할 것이다. */
         /* thread 함수를 connfd 인자로 받아서. */
-        Pthread_create(&tid, NULL, thread, connfd);
+        Pthread_create(&tid, NULL, thread, connfdp);
     }
     return 0;
 }
@@ -588,9 +595,10 @@ int main(int argc,char **argv)
 인자로 연결 식별자를 받는다. 자기 자신을 먼저 분리한 다음 doit()을 수행한다. 그 후 바로 종료한다. 분리되어 있으므로 종료 후 즉시 메모리가 회수된다.
 
 ```c
-void* thread(void *vargs){
-    int connfd = (int)vargs;
+void* thread(void *vargp){
+    int connfd = *((int*)vargp);
     Pthread_detach(pthread_self());  // 자기 자신을 분리해준다.
+    Free(vargp);  // 동적 할당한 파일 식별자 포인터를 free해준다.
     doit(connfd);
     Close(connfd);
 }
